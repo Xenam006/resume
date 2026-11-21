@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дашборд: здоровье продаж маркетплейса</title>
+<style>
+  :root{
+    --navy:#1f3a5f; --teal:#2a9d8f; --gold:#e9c46a; --steel:#4a7ba6; --gray:#b0b8c4;
+    --ink:#1b2430; --muted:#6b7685; --bg:#eef1f5; --card:#ffffff; --line:#e3e8ef;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px;}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;}
+  .head h1{font-size:22px;margin:0;}
+  .head .sub{color:var(--muted);font-size:13px;margin-top:4px;}
+  .head .who{text-align:right;color:var(--muted);font-size:13px;}
+  .head .who b{color:var(--ink);}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:16px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi .label{color:var(--muted);font-size:12px;}
+  .kpi .val{font-size:24px;font-weight:700;margin-top:6px;}
+  .kpi .delta{font-size:12px;margin-top:4px;}
+  .up{color:#1a8f5a;} .down{color:#c0392b;}
+  .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .card h2{font-size:14px;margin:0 0 14px;}
+  .card .hint{color:var(--muted);font-size:12px;font-weight:400;}
+  .bars{display:flex;flex-direction:column;gap:9px;}
+  .bar{display:grid;grid-template-columns:120px 1fr 56px;align-items:center;gap:10px;font-size:13px;}
+  .bar .track{height:16px;background:#f1f4f8;border-radius:8px;overflow:hidden;}
+  .bar .fill{height:100%;background:var(--navy);border-radius:8px;}
+  .bar .num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  .donut{display:flex;align-items:center;gap:18px;}
+  .ring{width:140px;height:140px;border-radius:50%;flex:0 0 auto;
+    background:conic-gradient(var(--navy) 0 12%, var(--teal) 12% 33%, var(--gold) 33% 51%, var(--steel) 51% 78%, var(--gray) 78% 100%);
+    -webkit-mask:radial-gradient(circle 42px at 50% 50%, transparent 98%, #000 100%);
+            mask:radial-gradient(circle 42px at 50% 50%, transparent 98%, #000 100%);}
+  .legend{font-size:13px;line-height:1.9;}
+  .legend .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;}
+  .insight{background:#f6f9fc;border:1px solid var(--line);border-left:3px solid var(--teal);
+    border-radius:8px;padding:12px 14px;font-size:13px;color:#2b3542;margin-top:16px;}
+  .insight b{color:var(--ink);}
+  .foot{color:var(--muted);font-size:11px;margin-top:14px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <h1>Здоровье продаж — маркетплейс</h1>
+      <div class="sub">Декабрь 2024 · обновление ежедневно</div>
+    </div>
+    <div class="who">Читатель: <b>коммерческий директор</b><br>Вопрос: где растём и где теряем клиентов</div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="label">Выручка за месяц · North Star</div><div class="val">16,0 млн ₽</div><div class="delta up">▲ 2,6% к ноябрю</div></div>
+    <div class="kpi"><div class="label">Средний чек (AOV)</div><div class="val">4 850 ₽</div><div class="delta up">▲ 1,9%</div></div>
+    <div class="kpi"><div class="label">Выручка на клиента (ARPU)</div><div class="val">9 200 ₽</div><div class="delta up">▲ 3,1%</div></div>
+    <div class="kpi"><div class="label">Повторные покупатели</div><div class="val">38%</div><div class="delta up">▲ 2 п.п.</div></div>
+    <div class="kpi"><div class="label">Отток (90 дней)</div><div class="val">24%</div><div class="delta down">▲ 1 п.п.</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Выручка по категориям <span class="hint">— млн ₽ за месяц</span></h2>
+      <div class="bars">
+        <div class="bar"><span>Электроника</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">4,2</span></div>
+        <div class="bar"><span>Авто</span><span class="track"><span class="fill" style="width:74%"></span></span><span class="num">3,1</span></div>
+        <div class="bar"><span>Дом и сад</span><span class="track"><span class="fill" style="width:48%"></span></span><span class="num">2,0</span></div>
+        <div class="bar"><span>Красота</span><span class="track"><span class="fill" style="width:38%"></span></span><span class="num">1,6</span></div>
+        <div class="bar"><span>Спорт</span><span class="track"><span class="fill" style="width:33%"></span></span><span class="num">1,4</span></div>
+        <div class="bar"><span>Одежда</span><span class="track"><span class="fill" style="width:31%"></span></span><span class="num">1,3</span></div>
+        <div class="bar"><span>Детские товары</span><span class="track"><span class="fill" style="width:24%"></span></span><span class="num">1,0</span></div>
+        <div class="bar"><span>Продукты</span><span class="track"><span class="fill" style="width:17%"></span></span><span class="num">0,7</span></div>
+        <div class="bar"><span>Книги</span><span class="track"><span class="fill" style="width:10%"></span></span><span class="num">0,4</span></div>
+        <div class="bar"><span>Зоотовары</span><span class="track"><span class="fill" style="width:7%"></span></span><span class="num">0,3</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Динамика выручки <span class="hint">— млн ₽ по месяцам</span></h2>
+      <svg viewBox="0 0 580 230" width="100%" role="img" aria-label="График выручки по месяцам">
+        <line x1="40" y1="20" x2="40" y2="200" stroke="#e3e8ef"/>
+        <line x1="40" y1="200" x2="560" y2="200" stroke="#e3e8ef"/>
+        <line x1="40" y1="110" x2="560" y2="110" stroke="#f0f3f7"/>
+        <text x="8" y="24" font-size="10" fill="#6b7685">16</text>
+        <text x="8" y="114" font-size="10" fill="#6b7685">13,5</text>
+        <text x="8" y="204" font-size="10" fill="#6b7685">11</text>
+        <polyline fill="none" stroke="#2a9d8f" stroke-width="2.5"
+          points="40,183 85,163 131,139 176,153 222,122 267,102 313,85 358,91 404,61 449,47 495,34 540,20"/>
+        <g fill="#2a9d8f">
+          <circle cx="40" cy="183" r="3"/><circle cx="85" cy="163" r="3"/><circle cx="131" cy="139" r="3"/>
+          <circle cx="176" cy="153" r="3"/><circle cx="222" cy="122" r="3"/><circle cx="267" cy="102" r="3"/>
+          <circle cx="313" cy="85" r="3"/><circle cx="358" cy="91" r="3"/><circle cx="404" cy="61" r="3"/>
+          <circle cx="449" cy="47" r="3"/><circle cx="495" cy="34" r="3"/><circle cx="540" cy="20" r="4" fill="#1f3a5f"/>
+        </g>
+        <g font-size="10" fill="#6b7685" text-anchor="middle">
+          <text x="40" y="216">янв</text><text x="131" y="216">мар</text><text x="222" y="216">май</text>
+          <text x="313" y="216">июл</text><text x="404" y="216">сен</text><text x="495" y="216">ноя</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <h2>RFM-сегменты клиентов <span class="hint">— доля клиентов</span></h2>
+      <div class="donut">
+        <div class="ring"></div>
+        <div class="legend">
+          <div><span class="dot" style="background:#1f3a5f"></span>Чемпионы — 12%</div>
+          <div><span class="dot" style="background:#2a9d8f"></span>Лояльные — 21%</div>
+          <div><span class="dot" style="background:#e9c46a"></span>Под угрозой — 18%</div>
+          <div><span class="dot" style="background:#4a7ba6"></span>Новички — 27%</div>
+          <div><span class="dot" style="background:#b0b8c4"></span>Спящие — 22%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Выручка по городам <span class="hint">— доля</span></h2>
+      <div class="bars">
+        <div class="bar"><span>Москва</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="num">34%</span></div>
+        <div class="bar"><span>Санкт-Петербург</span><span class="track"><span class="fill" style="width:56%"></span></span><span class="num">19%</span></div>
+        <div class="bar"><span>Екатеринбург</span><span class="track"><span class="fill" style="width:32%"></span></span><span class="num">11%</span></div>
+        <div class="bar"><span>Новосибирск</span><span class="track"><span class="fill" style="width:27%"></span></span><span class="num">9%</span></div>
+        <div class="bar"><span>Казань</span><span class="track"><span class="fill" style="width:24%"></span></span><span class="num">8%</span></div>
+        <div class="bar"><span>Прочие</span><span class="track"><span class="fill" style="width:56%"></span></span><span class="num">19%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <b>Что видно:</b> выручка растёт четвёртый месяц подряд, тянут её «Электроника» и «Авто» — вдвоём почти половина оборота. Но отток подрос до 24%, а в сегменте «Под угрозой» 18% клиентов. Деньги на привлечение частично утекают через отток: приоритет месяца — реактивация сегментов «Под угрозой» и «Спящие», а не только новый трафик.
+  </div>
+
+  <div class="foot">Данные синтетические, из кейса 3. Цифры иллюстративные — показывают устройство дашборда и логику выводов.</div>
+
+</div>
+</body>
+</html>
