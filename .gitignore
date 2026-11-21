@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+
+# Временные экспорты диаграмм
+*.tmp
+~$*
+
+# Python (если появятся ноутбуки)
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/

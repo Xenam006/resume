@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_booking_asis"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_booking_asis" name="Запись на занятие AS-IS" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1" name="Клиент хочет на занятие">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_call" name="Клиент звонит на ресепшен">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_search" name="Админ ищет свободное место в тетради / Excel">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_place" name="Место есть?">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_no</bpmn:outgoing>
+      <bpmn:outgoing>Flow_yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_reject" name="Отказ или лист ожидания на бумаге">
+      <bpmn:incoming>Flow_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_write" name="Админ записывает клиента вручную">
+      <bpmn:incoming>Flow_yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_check" name="Абонемент проверяется на бумаге">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_mark" name="Клиент приходит, админ отмечает вручную">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_done" name="Посещение учтено или потеряно">
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_call" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_call" targetRef="Task_search" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_search" targetRef="Gateway_place" />
+    <bpmn:sequenceFlow id="Flow_no" name="Нет" sourceRef="Gateway_place" targetRef="EndEvent_reject" />
+    <bpmn:sequenceFlow id="Flow_yes" name="Да" sourceRef="Gateway_place" targetRef="Task_write" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_write" targetRef="Task_check" />
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_check" targetRef="Task_mark" />
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_mark" targetRef="EndEvent_done" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_booking_asis">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_call_di" bpmnElement="Task_call">
+        <dc:Bounds x="240" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_search_di" bpmnElement="Task_search">
+        <dc:Bounds x="400" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_place_di" bpmnElement="Gateway_place" isMarkerVisible="true">
+        <dc:Bounds x="560" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_reject_di" bpmnElement="EndEvent_reject">
+        <dc:Bounds x="567" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_write_di" bpmnElement="Task_write">
+        <dc:Bounds x="680" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_check_di" bpmnElement="Task_check">
+        <dc:Bounds x="840" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_mark_di" bpmnElement="Task_mark">
+        <dc:Bounds x="1000" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_done_di" bpmnElement="EndEvent_done">
+        <dc:Bounds x="1160" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="160" />
+        <di:waypoint x="240" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="340" y="160" />
+        <di:waypoint x="400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="560" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_no_di" bpmnElement="Flow_no">
+        <di:waypoint x="585" y="185" />
+        <di:waypoint x="585" y="242" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_yes_di" bpmnElement="Flow_yes">
+        <di:waypoint x="610" y="160" />
+        <di:waypoint x="680" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="780" y="160" />
+        <di:waypoint x="840" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <di:waypoint x="940" y="160" />
+        <di:waypoint x="1000" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <di:waypoint x="1100" y="160" />
+        <di:waypoint x="1160" y="160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

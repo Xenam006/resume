@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_returns_tobe"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_returns_tobe" name="Возврат товара TO-BE" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1" name="Клиент хочет вернуть товар">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_lk" name="Клиент оформляет возврат в личном кабинете по шагам">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_right" name="Право на возврат есть? (автопроверка по правилам)">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_no</bpmn:outgoing>
+      <bpmn:outgoing>Flow_yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_reject" name="Автоотказ с понятной причиной">
+      <bpmn:incoming>Flow_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_waybill" name="Система генерирует транспортную накладную">
+      <bpmn:incoming>Flow_yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_handover" name="Клиент сдаёт товар в пункт выдачи / курьеру">
+      <bpmn:incoming>Flow_5</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_scan" name="Склад сканирует и проверяет товар, статус обновляется автоматически">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_ok" name="Товар в порядке?">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_dispute</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ok</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="Task_dispute" name="Автоуведомление клиента + задача оператору на спор">
+      <bpmn:incoming>Flow_dispute</bpmn:incoming>
+      <bpmn:outgoing>Flow_disp_end</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_dispute" name="Кейс передан на разбор">
+      <bpmn:incoming>Flow_disp_end</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_refund" name="Автоматический возврат денег на исходный способ оплаты">
+      <bpmn:incoming>Flow_ok</bpmn:incoming>
+      <bpmn:outgoing>Flow_done</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_done" name="Деньги возвращены, клиент видит статус в ЛК">
+      <bpmn:incoming>Flow_done</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_lk" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_lk" targetRef="Gateway_right" />
+    <bpmn:sequenceFlow id="Flow_no" name="Не положено" sourceRef="Gateway_right" targetRef="EndEvent_reject" />
+    <bpmn:sequenceFlow id="Flow_yes" name="Положено" sourceRef="Gateway_right" targetRef="Task_waybill" />
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_waybill" targetRef="Task_handover" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_handover" targetRef="Task_scan" />
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_scan" targetRef="Gateway_ok" />
+    <bpmn:sequenceFlow id="Flow_dispute" name="Нет" sourceRef="Gateway_ok" targetRef="Task_dispute" />
+    <bpmn:sequenceFlow id="Flow_ok" name="Да" sourceRef="Gateway_ok" targetRef="Task_refund" />
+    <bpmn:sequenceFlow id="Flow_disp_end" sourceRef="Task_dispute" targetRef="EndEvent_dispute" />
+    <bpmn:sequenceFlow id="Flow_done" sourceRef="Task_refund" targetRef="EndEvent_done" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_returns_tobe">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_lk_di" bpmnElement="Task_lk">
+        <dc:Bounds x="240" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_right_di" bpmnElement="Gateway_right" isMarkerVisible="true">
+        <dc:Bounds x="400" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_reject_di" bpmnElement="EndEvent_reject">
+        <dc:Bounds x="407" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_waybill_di" bpmnElement="Task_waybill">
+        <dc:Bounds x="520" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_handover_di" bpmnElement="Task_handover">
+        <dc:Bounds x="680" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_scan_di" bpmnElement="Task_scan">
+        <dc:Bounds x="840" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_ok_di" bpmnElement="Gateway_ok" isMarkerVisible="true">
+        <dc:Bounds x="1000" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_dispute_di" bpmnElement="Task_dispute">
+        <dc:Bounds x="975" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_dispute_di" bpmnElement="EndEvent_dispute">
+        <dc:Bounds x="1135" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_refund_di" bpmnElement="Task_refund">
+        <dc:Bounds x="1120" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_done_di" bpmnElement="EndEvent_done">
+        <dc:Bounds x="1280" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="160" />
+        <di:waypoint x="240" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="340" y="160" />
+        <di:waypoint x="400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_no_di" bpmnElement="Flow_no">
+        <di:waypoint x="425" y="185" />
+        <di:waypoint x="425" y="242" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_yes_di" bpmnElement="Flow_yes">
+        <di:waypoint x="450" y="160" />
+        <di:waypoint x="520" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_5_di" bpmnElement="Flow_5">
+        <di:waypoint x="620" y="160" />
+        <di:waypoint x="680" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="780" y="160" />
+        <di:waypoint x="840" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <di:waypoint x="940" y="160" />
+        <di:waypoint x="1000" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_dispute_di" bpmnElement="Flow_dispute">
+        <di:waypoint x="1025" y="185" />
+        <di:waypoint x="1025" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ok_di" bpmnElement="Flow_ok">
+        <di:waypoint x="1050" y="160" />
+        <di:waypoint x="1120" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_disp_end_di" bpmnElement="Flow_disp_end">
+        <di:waypoint x="1075" y="290" />
+        <di:waypoint x="1135" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_done_di" bpmnElement="Flow_done">
+        <di:waypoint x="1220" y="160" />
+        <di:waypoint x="1280" y="160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

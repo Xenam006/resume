@@ -1,0 +1,277 @@
+openapi: 3.0.3
+info:
+  title: FitPro CRM API
+  version: 1.0.0
+  description: >
+    Контракт API для CRM сети фитнес-клубов «ФитПро».
+    Базовый уровень — покрывает Must-требования: клиенты, абонементы,
+    расписание, записи на занятия и учёт посещений (check-in).
+    Описан бизнес-аналитиком как основа для разработки.
+servers:
+  - url: https://api.fitpro.example/v1
+    description: Условный сервер (пример)
+
+tags:
+  - name: clients
+    description: Клиенты
+  - name: memberships
+    description: Абонементы
+  - name: schedule
+    description: Расписание и записи
+  - name: visits
+    description: Посещения
+  - name: reports
+    description: Отчёты
+
+paths:
+  /clients:
+    get:
+      tags: [clients]
+      summary: Поиск клиентов
+      parameters:
+        - name: phone
+          in: query
+          schema: { type: string }
+          description: Поиск по телефону
+        - name: query
+          in: query
+          schema: { type: string }
+          description: Поиск по имени
+      responses:
+        '200':
+          description: Список клиентов
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Client' }
+    post:
+      tags: [clients]
+      summary: Создать клиента
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClientCreate' }
+      responses:
+        '201':
+          description: Клиент создан
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Client' }
+        '409':
+          description: Клиент с таким телефоном уже существует
+
+  /clients/{clientId}/memberships:
+    post:
+      tags: [memberships]
+      summary: Продать/продлить абонемент клиенту
+      parameters:
+        - name: clientId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [typeId, paymentMethod]
+              properties:
+                typeId:
+                  type: integer
+                  description: Идентификатор тарифа
+                paymentMethod:
+                  type: string
+                  enum: [card, cash, online]
+      responses:
+        '201':
+          description: Абонемент создан/продлён
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Membership' }
+        '404':
+          description: Клиент или тариф не найден
+
+  /sessions:
+    get:
+      tags: [schedule]
+      summary: Расписание групповых занятий
+      parameters:
+        - name: clubId
+          in: query
+          schema: { type: integer }
+        - name: dateFrom
+          in: query
+          schema: { type: string, format: date }
+        - name: dateTo
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Список занятий со свободными местами
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Session' }
+
+  /sessions/{sessionId}/bookings:
+    post:
+      tags: [schedule]
+      summary: Записать клиента на занятие
+      description: >
+        Создаёт бронь, если у клиента активный абонемент с остатком посещений
+        и на занятии есть свободное место (см. US-2 / UC-1).
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clientId]
+              properties:
+                clientId: { type: integer }
+      responses:
+        '201':
+          description: Бронь создана
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Booking' }
+        '402':
+          description: Нет активного абонемента — предложить покупку/продление
+        '409':
+          description: Нет свободных мест или клиент уже записан
+
+  /bookings/{bookingId}:
+    delete:
+      tags: [schedule]
+      summary: Отменить запись
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        '204':
+          description: Запись отменена
+        '404':
+          description: Бронь не найдена
+
+  /visits/check-in:
+    post:
+      tags: [visits]
+      summary: Отметить приход клиента (check-in)
+      description: >
+        Фиксирует посещение и списывает его с абонемента.
+        Повторный check-in на то же занятие не создаёт двойного списания (NFR-6).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clientId]
+              properties:
+                clientId: { type: integer }
+                sessionId: { type: integer }
+      responses:
+        '201':
+          description: Посещение зафиксировано
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Visit' }
+        '403':
+          description: Абонемент истёк или заморожен
+        '409':
+          description: Клиент уже отмечен на это занятие
+
+  /reports/expiring-memberships:
+    get:
+      tags: [reports]
+      summary: Абонементы, истекающие в ближайшие N дней
+      parameters:
+        - name: days
+          in: query
+          schema: { type: integer, default: 7 }
+      responses:
+        '200':
+          description: Клиенты с истекающими абонементами (для продлений)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ExpiringMembership' }
+
+components:
+  schemas:
+    Client:
+      type: object
+      properties:
+        clientId: { type: integer }
+        fullName: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        homeClubId: { type: integer }
+    ClientCreate:
+      type: object
+      required: [fullName, phone, homeClubId, consentPdn]
+      properties:
+        fullName: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        homeClubId: { type: integer }
+        consentPdn:
+          type: boolean
+          description: Согласие на обработку персональных данных (152-ФЗ)
+    Membership:
+      type: object
+      properties:
+        membershipId: { type: integer }
+        clientId: { type: integer }
+        typeId: { type: integer }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        visitsRemaining: { type: integer, nullable: true }
+        status:
+          type: string
+          enum: [active, expired, frozen]
+    Session:
+      type: object
+      properties:
+        sessionId: { type: integer }
+        clubId: { type: integer }
+        title: { type: string }
+        startsAt: { type: string, format: date-time }
+        capacity: { type: integer }
+        freeSlots: { type: integer }
+    Booking:
+      type: object
+      properties:
+        bookingId: { type: integer }
+        clientId: { type: integer }
+        sessionId: { type: integer }
+        status:
+          type: string
+          enum: [active, cancelled, attended, no_show]
+    Visit:
+      type: object
+      properties:
+        visitId: { type: integer }
+        clientId: { type: integer }
+        sessionId: { type: integer }
+        checkedInAt: { type: string, format: date-time }
+    ExpiringMembership:
+      type: object
+      properties:
+        clientId: { type: integer }
+        fullName: { type: string }
+        phone: { type: string }
+        endDate: { type: string, format: date }
+        tariff: { type: string }

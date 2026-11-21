@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_returns_asis"
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+  <bpmn:process id="Process_returns_asis" name="Возврат товара AS-IS" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_1" name="Клиент хочет вернуть товар">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="Task_write" name="Клиент пишет в поддержку в свободной форме">
+      <bpmn:incoming>Flow_1</bpmn:incoming>
+      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_check" name="Оператор вручную ищет заказ и проверяет право на возврат">
+      <bpmn:incoming>Flow_2</bpmn:incoming>
+      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_possible" name="Возврат возможен?">
+      <bpmn:incoming>Flow_3</bpmn:incoming>
+      <bpmn:outgoing>Flow_no</bpmn:outgoing>
+      <bpmn:outgoing>Flow_yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_reject" name="Отказ, объяснение клиенту">
+      <bpmn:incoming>Flow_no</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="Task_excel" name="Оператор заводит заявку в Excel-таблицу">
+      <bpmn:incoming>Flow_yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_send" name="Клиент сам отправляет товар Почтой России">
+      <bpmn:incoming>Flow_6</bpmn:incoming>
+      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_warehouse" name="Склад принимает и проверяет товар">
+      <bpmn:incoming>Flow_7</bpmn:incoming>
+      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="Task_refund" name="Бухгалтерия вручную оформляет возврат денег (партиями раз в неделю)">
+      <bpmn:incoming>Flow_8</bpmn:incoming>
+      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_done" name="Деньги возвращены, клиент уведомлён">
+      <bpmn:incoming>Flow_9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_write" />
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_write" targetRef="Task_check" />
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_check" targetRef="Gateway_possible" />
+    <bpmn:sequenceFlow id="Flow_no" name="Нет" sourceRef="Gateway_possible" targetRef="EndEvent_reject" />
+    <bpmn:sequenceFlow id="Flow_yes" name="Да" sourceRef="Gateway_possible" targetRef="Task_excel" />
+    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_excel" targetRef="Task_send" />
+    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_send" targetRef="Task_warehouse" />
+    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_warehouse" targetRef="Task_refund" />
+    <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_refund" targetRef="EndEvent_done" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_returns_asis">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_write_di" bpmnElement="Task_write">
+        <dc:Bounds x="240" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_check_di" bpmnElement="Task_check">
+        <dc:Bounds x="400" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_possible_di" bpmnElement="Gateway_possible" isMarkerVisible="true">
+        <dc:Bounds x="560" y="135" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_reject_di" bpmnElement="EndEvent_reject">
+        <dc:Bounds x="567" y="242" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_excel_di" bpmnElement="Task_excel">
+        <dc:Bounds x="680" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_send_di" bpmnElement="Task_send">
+        <dc:Bounds x="840" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_warehouse_di" bpmnElement="Task_warehouse">
+        <dc:Bounds x="1000" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_refund_di" bpmnElement="Task_refund">
+        <dc:Bounds x="1160" y="120" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_done_di" bpmnElement="EndEvent_done">
+        <dc:Bounds x="1320" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="188" y="160" />
+        <di:waypoint x="240" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="340" y="160" />
+        <di:waypoint x="400" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="500" y="160" />
+        <di:waypoint x="560" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_no_di" bpmnElement="Flow_no">
+        <di:waypoint x="585" y="185" />
+        <di:waypoint x="585" y="242" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_yes_di" bpmnElement="Flow_yes">
+        <di:waypoint x="610" y="160" />
+        <di:waypoint x="680" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
+        <di:waypoint x="780" y="160" />
+        <di:waypoint x="840" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
+        <di:waypoint x="940" y="160" />
+        <di:waypoint x="1000" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
+        <di:waypoint x="1100" y="160" />
+        <di:waypoint x="1160" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
+        <di:waypoint x="1260" y="160" />
+        <di:waypoint x="1320" y="160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
